@@ -4,18 +4,15 @@ import './index.css';
 import { ThemeProvider } from '@/components/theme-provider';
 import { ModeToggle } from './components/toggle-theme-button.tsx';
 import { Toaster } from './components/ui/toaster.tsx';
-import { RouterProvider, createRouter } from '@tanstack/react-router';
-
-// Import the generated route tree
-import { routeTree } from './routeTree.gen';
-
-// Create a new router instance
-const router = createRouter({ routeTree });
+import App from './app.tsx';
+import { AuthProvider } from './components/auth/auth-context.tsx';
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
-      <RouterProvider router={router} />
+      <AuthProvider>
+        <App />
+      </AuthProvider>
       <div className="fixed top-4 right-4">
         <ModeToggle />
       </div>
