@@ -19,6 +19,7 @@ import { UsersModule } from './users/users.module';
       }),
     }),
     DatabaseModule,
+    UsersModule,
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
       autoSchemaFile: true,
@@ -26,7 +27,6 @@ import { UsersModule } from './users/users.module';
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, '..', 'public'),
     }),
-    UsersModule,
   ],
   controllers: [AppController],
   providers: [AppService],

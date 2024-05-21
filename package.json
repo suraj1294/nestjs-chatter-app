@@ -29,6 +29,7 @@
     "@nestjs/mongoose": "^10.0.6",
     "@nestjs/platform-express": "^10.0.0",
     "@nestjs/serve-static": "^4.0.2",
+    "bcrypt": "^5.1.1",
     "graphql": "^16.8.1",
     "joi": "^17.13.1",
     "mongoose": "^8.4.0",
