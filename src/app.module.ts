@@ -17,6 +17,8 @@ import { LoggerModule } from 'nestjs-pino';
       isGlobal: true,
       validationSchema: Joi.object({
         MONGODB_URI: Joi.string().required(),
+        MONGODB_DATABASE: Joi.string().required(),
+        PORT: Joi.number().default(3000),
       }),
     }),
     DatabaseModule,
