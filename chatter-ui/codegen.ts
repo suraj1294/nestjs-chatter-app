@@ -1,12 +1,16 @@
-import { CodegenConfig } from '@graphql-codegen/cli';
+import type { CodegenConfig } from '@graphql-codegen/cli';
 
 const config: CodegenConfig = {
+  overwrite: true,
   schema: `${process.env.VITE_API_URL}/graphql`,
-  documents: ['src/**/*.tsx'],
-  ignoreNoDocuments: true, // for better experience with the watcher
+  documents: 'src/**/*.(tsx|ts)',
   generates: {
-    './src/gql/': {
+    'src/gql/': {
       preset: 'client',
+      plugins: [],
+    },
+    './graphql.schema.json': {
+      plugins: ['introspection'],
     },
   },
 };
