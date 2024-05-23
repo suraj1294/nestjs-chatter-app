@@ -7,7 +7,9 @@
     "dev": "vite",
     "build": "tsc && vite build",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "codegen": "bunx graphql-codegen",
+    "codegen:watch": "bunx graphql-codegen --watch"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.4.0",
@@ -19,6 +21,8 @@
     "@tanstack/react-router": "^1.33.4",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
+    "graphql": "^16.8.1",
+    "graphql-request": "^7.0.1",
     "lucide-react": "^0.378.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
@@ -28,6 +32,9 @@
     "zod": "^3.23.8"
   },
   "devDependencies": {
+    "@graphql-codegen/cli": "^5.0.2",
+    "@graphql-codegen/client-preset": "^4.2.6",
+    "@parcel/watcher": "^2.4.1",
     "@tanstack/router-devtools": "^1.33.4",
     "@tanstack/router-vite-plugin": "^1.32.17",
     "@types/node": "^20.12.12",
@@ -42,6 +49,7 @@
     "eslint-plugin-react-refresh": "^0.4.6",
     "postcss": "^8.4.38",
     "tailwindcss": "^3.4.3",
+    "ts-node": "^10.9.2",
     "typescript": "^5.2.2",
     "vite": "^5.2.0"
   }
