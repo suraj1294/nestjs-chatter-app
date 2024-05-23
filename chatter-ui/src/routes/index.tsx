@@ -1,4 +1,6 @@
 import { useAuth } from '@/components/auth/auth-context';
+import { Button } from '@/components/ui/button';
+import useCreateUser from '@/services/useCreateUser';
 import useUsers from '@/services/useUsers';
 import { createFileRoute, redirect } from '@tanstack/react-router';
 
@@ -21,7 +23,22 @@ function Index() {
 
   const { data } = useUsers();
 
+  const { mutate, data: createUserMutation } = useCreateUser();
+
   console.log(data);
 
-  return <>Welcome {auth?.user?.name}</>;
+  console.log(createUserMutation);
+
+  return (
+    <>
+      Welcome {auth?.user?.name}
+      <Button
+        onClick={() =>
+          mutate({ email: 'suraj@gmail.com', password: 'Suraj_patil@1294' })
+        }
+      >
+        Create
+      </Button>
+    </>
+  );
 }
