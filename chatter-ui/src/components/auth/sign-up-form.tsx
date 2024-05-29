@@ -17,6 +17,8 @@ import { Input } from '@/components/ui/input';
 import { toast } from '@/components/ui/use-toast';
 import { Card } from '../ui/card';
 import { Link } from '@tanstack/react-router';
+import { Loader } from 'lucide-react';
+import useCreateUser from '@/services/useCreateUser';
 
 const FormSchema = z
   .object({
@@ -41,23 +43,32 @@ const FormSchema = z
   );
 
 export function SignUpForm() {
+  const { mutate, isPending } = useCreateUser({
+    onSuccess: () => {
+      toast({
+        title: 'Account created.',
+        description: 'Login Successful',
+      });
+      form.reset();
+    },
+    onError: () => {
+      toast({
+        title: 'Account creation failed.',
+        description: 'Failed to create account.',
+      });
+    },
+  });
+
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
       email: '',
+      password: '',
     },
   });
 
   function onSubmit(data: z.infer<typeof FormSchema>) {
-    alert(JSON.stringify(data, null, 2));
-    toast({
-      title: 'You submitted the following values:',
-      description: (
-        <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-          <code className="text-white">{JSON.stringify(data, null, 2)}</code>
-        </pre>
-      ),
-    });
+    mutate({ email: data.email, password: data.password });
   }
 
   return (
@@ -105,7 +116,9 @@ export function SignUpForm() {
             )}
           />
 
-          <Button type="submit">Sign Up</Button>
+          <Button type="submit" disabled={isPending}>
+            {isPending ? <Loader /> : null} Sign Up
+          </Button>
           <Link to="/login">
             <Button variant="link">Already have an account?</Button>
           </Link>

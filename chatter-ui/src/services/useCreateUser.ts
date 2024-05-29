@@ -1,6 +1,6 @@
 import { GRAPHQL_API_URL } from '@/constants/env';
 import { graphql } from '@/gql/gql';
-import { CreateUserInput } from '@/gql/graphql';
+import { CreateUserInput, CreateUserMutation } from '@/gql/graphql';
 import { useMutation } from '@tanstack/react-query';
 import request from 'graphql-request';
 
@@ -13,12 +13,17 @@ const usersCreateDocument = graphql(/* GraphQL */ `
   }
 `);
 
-const useCreateUser = () => {
-  const { data, error, mutate } = useMutation({
+const useCreateUser = (props: {
+  onSuccess?: (data: CreateUserMutation, variables: CreateUserInput) => void;
+  onError?: (error: Error, variables: CreateUserInput) => void;
+}) => {
+  const { data, error, mutate, isPending } = useMutation({
     mutationFn: (createUserInput: CreateUserInput) =>
       request(GRAPHQL_API_URL, usersCreateDocument, { createUserInput }),
+    onSuccess: props.onSuccess,
+    onError: props.onError,
   });
-  return { data, error, mutate };
+  return { data, error, mutate, isPending };
 };
 
 export default useCreateUser;
