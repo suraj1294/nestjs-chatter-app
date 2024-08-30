@@ -15,6 +15,15 @@ export class AuthController {
     @CurrentUser() user: User,
     @Res({ passthrough: true }) response: Response,
   ) {
-    return this.authService.login(user, response);
+    const token = await this.authService.login(user, response);
+
+    return { message: 'ok', token };
+  }
+
+  @Post('logout')
+  async logout(@Res({ passthrough: true }) response: Response) {
+    await this.authService.logout(response);
+
+    return { message: 'ok' };
   }
 }

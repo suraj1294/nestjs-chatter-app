@@ -15,7 +15,7 @@ const usersCreateDocument = graphql(/* GraphQL */ `
 
 const useCreateUser = (props: {
   onSuccess?: (data: CreateUserMutation, variables: CreateUserInput) => void;
-  onError?: (error: Error, variables: CreateUserInput) => void;
+  onError?: (error: unknown, variables: CreateUserInput) => void;
 }) => {
   const { data, error, mutate, isPending } = useMutation({
     mutationFn: (createUserInput: CreateUserInput) =>

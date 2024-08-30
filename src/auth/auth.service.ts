@@ -27,5 +27,16 @@ export class AuthService {
       httpOnly: true,
       expires,
     });
+
+    return token;
+  }
+
+  async logout(response: Response) {
+    const expires = new Date();
+
+    response.cookie('Authentication', '', {
+      httpOnly: true,
+      expires,
+    });
   }
 }

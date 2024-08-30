@@ -11,7 +11,7 @@ export interface User {
 }
 
 interface AppRouterContext {
-  auth?: AuthState;
+  auth?: AuthState | null;
   queryClient: QueryClient;
 }
 

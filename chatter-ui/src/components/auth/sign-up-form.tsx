@@ -16,9 +16,12 @@ import {
 import { Input } from '@/components/ui/input';
 import { toast } from '@/components/ui/use-toast';
 import { Card } from '../ui/card';
-import { Link } from '@tanstack/react-router';
+import { Link, Navigate } from '@tanstack/react-router';
 import { Loader } from 'lucide-react';
 import useCreateUser from '@/services/useCreateUser';
+import parseGqlError from '@/lib/graphql-parse-error';
+import { useRef } from 'react';
+import { useAuth } from './auth-context';
 
 const FormSchema = z
   .object({
@@ -43,7 +46,9 @@ const FormSchema = z
   );
 
 export function SignUpForm() {
-  const { mutate, isPending } = useCreateUser({
+  const emailRef = useRef<string>('');
+  const { auth } = useAuth();
+  const { mutate, isPending, error } = useCreateUser({
     onSuccess: () => {
       toast({
         title: 'Account created.',
@@ -68,7 +73,14 @@ export function SignUpForm() {
   });
 
   function onSubmit(data: z.infer<typeof FormSchema>) {
+    emailRef.current = data.email;
     mutate({ email: data.email, password: data.password });
+  }
+
+  const errorMessage = parseGqlError(error);
+
+  if (auth?.user?.id) {
+    return <Navigate to="/" />;
   }
 
   return (
@@ -115,6 +127,10 @@ export function SignUpForm() {
               </FormItem>
             )}
           />
+
+          {emailRef.current === form.watch('email') && errorMessage && (
+            <FormMessage>{errorMessage}</FormMessage>
+          )}
 
           <Button type="submit" disabled={isPending}>
             {isPending ? <Loader /> : null} Sign Up

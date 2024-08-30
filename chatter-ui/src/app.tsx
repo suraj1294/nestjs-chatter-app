@@ -1,12 +1,20 @@
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import {
+  QueryCache,
+  QueryClient,
+  QueryClientProvider,
+} from '@tanstack/react-query';
 import { RouterProvider, createRouter } from '@tanstack/react-router';
 import { routeTree } from './routeTree.gen';
-import { User, useAuth } from './components/auth/auth-context';
-import { useEffect, useState } from 'react';
-import { Loader } from 'lucide-react';
-
+import { useAuth } from './components/auth/auth-context';
+import { Loader2 } from 'lucide-react';
 // Create a client
-const queryClient = new QueryClient();
+export const queryClient = new QueryClient({
+  queryCache: new QueryCache({
+    onError(error, query) {
+      console.error(error, query);
+    },
+  }),
+});
 
 const router = createRouter({
   routeTree,
@@ -22,29 +30,15 @@ declare module '@tanstack/react-router' {
   }
 }
 
-const fetchUser = (): Promise<User> =>
-  new Promise((resolve) => {
-    setTimeout(() => {
-      resolve({
-        id: 'af9dc63a-df42-427e-9ee8-b9ea1a1382dc',
-        email: 'John',
-        name: 'Doe1',
-      });
-    }, 1000);
-  });
-
 const App = () => {
-  const { auth, setAuth } = useAuth();
-  const [loading, setLoading] = useState(true);
+  const { auth, isLoading } = useAuth();
 
-  useEffect(() => {
-    fetchUser().then((user) => {
-      setAuth({ user });
-      setLoading(false);
-    });
-  }, [setAuth]);
-
-  if (loading) return <Loader />;
+  if (isLoading)
+    return (
+      <div className="mih-h-screen justify-center items-center">
+        <Loader2 className="animate-spin" />
+      </div>
+    );
 
   return (
     <QueryClientProvider client={queryClient}>

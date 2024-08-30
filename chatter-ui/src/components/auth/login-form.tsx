@@ -1,9 +1,6 @@
-'use client';
-
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
-
 import { Button } from '@/components/ui/button';
 import {
   Form,
@@ -16,9 +13,11 @@ import {
 import { Input } from '@/components/ui/input';
 import { toast } from '@/components/ui/use-toast';
 import { Card } from '../ui/card';
-import { Link } from '@tanstack/react-router';
-import useCreateUser from '@/services/useCreateUser';
+import { Link, Navigate } from '@tanstack/react-router';
 import { Loader } from 'lucide-react';
+import useLoginUser from '@/services/useLoginUser';
+import { AxiosError } from 'axios';
+import { useAuth } from './auth-context';
 
 const FormSchema = z.object({
   email: z.string().min(2, {
@@ -30,18 +29,22 @@ const FormSchema = z.object({
 });
 
 export function LoginForm() {
-  const { mutate, isPending } = useCreateUser({
+  const { auth, loadUser } = useAuth();
+
+  const { mutate, isPending, error } = useLoginUser({
     onSuccess: () => {
       toast({
-        title: 'Account created.',
-        description: 'Login Successful',
+        title: 'Login Success.',
+        description: 'Logged in Successfully',
       });
+
       form.reset();
+      loadUser?.();
     },
     onError: () => {
       toast({
-        title: 'Account creation failed.',
-        description: 'Failed to create account.',
+        title: 'Failed to Login',
+        description: 'Invalid Credentials',
       });
     },
   });
@@ -56,6 +59,13 @@ export function LoginForm() {
 
   function onSubmit(data: z.infer<typeof FormSchema>) {
     mutate({ email: data.email, password: data.password });
+  }
+
+  const errorMessage = (error as AxiosError<{ message?: string }>)?.response
+    ?.data?.message;
+
+  if (auth?.user) {
+    return <Navigate to="/" />;
   }
 
   return (
@@ -88,6 +98,8 @@ export function LoginForm() {
               </FormItem>
             )}
           />
+
+          {errorMessage && <FormMessage>{errorMessage}</FormMessage>}
 
           <Button type="submit" disabled={isPending}>
             {isPending ? <Loader /> : 'Log In'}
