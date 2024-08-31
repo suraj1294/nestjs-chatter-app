@@ -1,14 +1,15 @@
-import { Button } from '../ui/button';
 import { CircleUser } from 'lucide-react';
+
+import { useAuth } from './auth-context';
+import useLogoutUser from '@/services/useLogoutUser';
+import { useRouter } from '@tanstack/react-router';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from '../ui/dropdown-menu';
-import { useAuth } from './auth-context';
-import useLogoutUser from '@/services/useLogoutUser';
-import { useRouter } from '@tanstack/react-router';
+} from '@/components/ui/dropdown-menu';
+import { Button } from '@/components/ui/button';
 
 export const UserMenu = () => {
   const { auth, setAuth } = useAuth();

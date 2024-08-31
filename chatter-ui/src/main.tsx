@@ -4,7 +4,7 @@ import './index.css';
 import { ThemeProvider } from '@/components/theme-provider';
 import { Toaster } from './components/ui/toaster.tsx';
 import App from './app.tsx';
-import { AuthProvider } from './components/auth/auth-context.tsx';
+import { AuthProvider } from './features/auth/auth-context.tsx';
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>

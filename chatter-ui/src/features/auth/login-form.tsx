@@ -12,7 +12,7 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { toast } from '@/components/ui/use-toast';
-import { Card } from '../ui/card';
+import { Card } from '@/components/ui/card';
 import { Link, Navigate } from '@tanstack/react-router';
 import { Loader } from 'lucide-react';
 import useLoginUser from '@/services/useLoginUser';

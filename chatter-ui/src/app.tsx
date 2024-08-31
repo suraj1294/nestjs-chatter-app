@@ -5,8 +5,9 @@ import {
 } from '@tanstack/react-query';
 import { RouterProvider, createRouter } from '@tanstack/react-router';
 import { routeTree } from './routeTree.gen';
-import { useAuth } from './components/auth/auth-context';
+
 import { Loader2 } from 'lucide-react';
+import { useAuth } from './features/auth/auth-context';
 // Create a client
 export const queryClient = new QueryClient({
   queryCache: new QueryCache({
