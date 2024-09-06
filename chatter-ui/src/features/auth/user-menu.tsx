@@ -17,11 +17,11 @@ export const UserMenu = () => {
   const { mutate } = useLogoutUser({
     onSuccess: () => {
       setAuth({ user: undefined });
-      router.navigate({ to: '/login' });
+      router.navigate({ to: '/auth/login' });
     },
     onError: () => {
       setAuth({ user: undefined });
-      router.navigate({ to: '/login' });
+      router.navigate({ to: '/auth/login' });
     },
   });
 

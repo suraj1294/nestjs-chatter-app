@@ -15,13 +15,14 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { toast } from '@/components/ui/use-toast';
-import { Card } from '../ui/card';
+
 import { Link, Navigate } from '@tanstack/react-router';
 import { Loader } from 'lucide-react';
 import useCreateUser from '@/services/useCreateUser';
 import parseGqlError from '@/lib/graphql-parse-error';
 import { useRef } from 'react';
 import { useAuth } from './auth-context';
+import { Card } from '@/components/ui/card';
 
 const FormSchema = z
   .object({
@@ -135,7 +136,7 @@ export function SignUpForm() {
           <Button type="submit" disabled={isPending}>
             {isPending ? <Loader /> : null} Sign Up
           </Button>
-          <Link to="/login">
+          <Link to="/auth/login">
             <Button variant="link">Already have an account?</Button>
           </Link>
         </form>

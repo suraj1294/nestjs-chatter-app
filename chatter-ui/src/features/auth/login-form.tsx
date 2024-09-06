@@ -104,7 +104,7 @@ export function LoginForm() {
           <Button type="submit" disabled={isPending}>
             {isPending ? <Loader /> : 'Log In'}
           </Button>
-          <Link to="/sign-up">
+          <Link to="/auth/sign-up">
             <Button variant="link"> Don't have an account? </Button>
           </Link>
         </form>
