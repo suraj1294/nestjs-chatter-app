@@ -15,20 +15,23 @@ import { useState } from 'react';
 import useCreateChat from '@/services/useCreateChat';
 import { toast } from '@/components/ui/use-toast';
 import { queryClient } from '@/app';
+import { useNavigate } from '@tanstack/react-router';
 
 export function CreateChatButton() {
   const [isPrivate, setIsPrivate] = useState(false);
   const [open, setOpen] = useState(false);
   const [name, setName] = useState('');
+  const navigate = useNavigate();
 
   const { mutate, isPending } = useCreateChat({
-    onSuccess: () => {
+    onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ['chats'] });
       setOpen(false);
       toast({
         title: 'Chat Created.',
         description: 'Chat Created Successfully',
       });
+      navigate({ to: `/chat/${data?.createChat._id}` });
     },
   });
 

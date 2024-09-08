@@ -1,18 +1,18 @@
 import { useAuth } from '@/features/auth/auth-context';
 import { ChatList } from '@/features/chat/chat-list';
-import { createFileRoute, redirect } from '@tanstack/react-router';
+import { createFileRoute } from '@tanstack/react-router';
 
 export const Route = createFileRoute('/')({
-  beforeLoad: async ({ context, location }) => {
-    if (!context?.auth?.user?.id) {
-      throw redirect({
-        to: '/auth/login',
-        search: {
-          redirect: location.href,
-        },
-      });
-    }
-  },
+  // beforeLoad: async ({ context, location }) => {
+  //   if (!context?.auth?.user?.id) {
+  //     throw redirect({
+  //       to: '/auth/login',
+  //       search: {
+  //         redirect: location.href,
+  //       },
+  //     });
+  //   }
+  // },
 
   component: Index,
 });
@@ -27,7 +27,9 @@ function Index() {
       <aside className="overflow-y-auto w-[15rem]">
         <ChatList />
       </aside>
-      <main className="flex-1 overflow-auto">Welcome {auth?.user?.email}</main>
+      <main className="flex-1 overflow-auto max-w-xl">
+        Welcome {auth?.user?.email}
+      </main>
     </div>
   );
 }

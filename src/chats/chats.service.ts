@@ -11,7 +11,8 @@ export class ChatsService {
       ...createChatInput,
       userId,
       userIds: createChatInput.userIds || [],
-      name: createChatInput.name || null,
+      name: createChatInput.name,
+      messages: [],
     });
   }
 
