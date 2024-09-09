@@ -124,11 +124,19 @@ function Index() {
   useReactQuerySubscribe(chatId);
 
   const { mutate } = useCreateMessage({
-    onSuccess: () => {
+    onSuccess: (data) => {
       // toast({
       //   title: 'Message sent',
       //   description: 'Your message has been sent',
       // });
+      queryClient.setQueryData(
+        ['chatMessages', chatId],
+        (old: MessagesQuery) => {
+          return {
+            messages: [...(old?.messages || []), data.createMessage],
+          };
+        },
+      );
     },
     onError: (error) => {
       console.log(error);

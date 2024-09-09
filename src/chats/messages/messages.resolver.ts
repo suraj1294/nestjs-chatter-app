@@ -9,7 +9,6 @@ import { TokenPayload } from 'src/auth/token-payload.interface';
 import { GetMessagesArgs } from './dto/get-messages.args';
 import { PUB_SUB } from 'src/common/constants/injection-tokens';
 import { PubSub } from 'graphql-subscriptions';
-import { MESSAGE_CREATED } from './constants/pubsub-triggers';
 import { MessageCreatedArgs } from './dto/message.created.args';
 
 @Resolver(() => Message)
@@ -34,23 +33,27 @@ export class MessagesResolver {
     @Args() getMessagesArgs: GetMessagesArgs,
     @CurrentUser() user: TokenPayload,
   ) {
-    return this.messagesService.getChatMessages(
-      getMessagesArgs.chatId,
-      user._id,
-    );
+    return this.messagesService.getChatMessages(getMessagesArgs, user._id);
   }
 
   @Subscription(() => Message, {
-    filter(payload, variables) {
+    filter(payload, variables, context) {
       //payload is the new created message
       //variables in chatId mentioned in while
       //subscription on client side
 
-      return payload.messageCreated.chatId === variables.chatId;
+      const userId = context.req.user._id;
+
+      return (
+        payload.messageCreated.chatId === variables.chatId &&
+        payload.messageCreated.userId !== userId
+      );
     },
   })
-  async messageCreated(@Args() messageCreated: MessageCreatedArgs) {
-    console.log(messageCreated);
-    return this.pubSub.asyncIterator(MESSAGE_CREATED);
+  async messageCreated(
+    @Args() messageCreatedArgs: MessageCreatedArgs,
+    @CurrentUser() user: TokenPayload,
+  ) {
+    return this.messagesService.messageCreated(messageCreatedArgs, user._id);
   }
 }
