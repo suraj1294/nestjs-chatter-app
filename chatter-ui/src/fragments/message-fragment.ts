@@ -6,5 +6,6 @@ graphql(`
     content
     createdAt
     userId
+    chatId
   }
 `);

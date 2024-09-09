@@ -1,36 +1,134 @@
-import { queryClient } from '@/app';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { toast } from '@/components/ui/use-toast';
 import useCreateMessage from '@/services/useCreateMessage';
 import useChat from '@/services/useGetChat';
-import useGetChatMessages from '@/services/useGetChatMessages';
 import { createFileRoute } from '@tanstack/react-router';
 import { SendIcon, UserIcon } from 'lucide-react';
 import { useEffect, useRef } from 'react';
+import { Client, createClient } from 'graphql-ws';
+import { messageCreatedQuery } from '@/services/useMessageCreated';
+import { GRAPHQL_WS_URL } from '@/constants/env';
+import useGetChatMessages from '@/services/useGetChatMessages';
+import { queryClient } from '@/app';
+import { MessageCreatedSubscription, MessagesQuery } from '@/gql/graphql';
 
 export const Route = createFileRoute('/chat/_chat/$id')({
   component: Index,
 });
 
+// const client = createClient({
+//   url: GRAPHQL_WS_URL,
+// });
+
+const useReactQuerySubscribe = (chatId: string) => {
+  const chatIdRef = useRef('');
+
+  const websocket = useRef<Client>();
+  const websocketState = useRef<'opened' | 'closed' | 'connecting' | 'error'>(
+    'closed',
+  );
+
+  useEffect(() => {
+    if (chatIdRef.current !== chatId && chatId) {
+      console.log('useReactQuerySubscribe', chatId);
+      chatIdRef.current = chatId;
+      websocket.current = createClient({
+        url: GRAPHQL_WS_URL,
+        on: {
+          opened: () => {
+            websocketState.current = 'opened';
+            console.log('opened');
+          },
+          error: (e) => {
+            websocketState.current = 'error';
+            console.log('error', e);
+          },
+          closed: () => {
+            websocketState.current = 'closed';
+            console.log('closed');
+          },
+          connecting: () => {
+            websocketState.current = 'connecting';
+            console.log('connecting');
+          },
+          pong: () => {
+            console.log('pong');
+          },
+          ping: () => {
+            console.log('ping');
+          },
+          message: (data) => {
+            console.log('message', data);
+          },
+        },
+      });
+
+      websocket.current.subscribe<MessageCreatedSubscription>(
+        {
+          variables: {
+            chatId,
+          },
+          query: messageCreatedQuery,
+        },
+        {
+          next: (data) => {
+            console.log(data);
+
+            queryClient.setQueryData(
+              ['chatMessages', chatId],
+              (old: MessagesQuery) => {
+                // const update = (
+                //   entity: MessageCreatedSubscription['messageCreated'],
+                // ) =>
+                //   entity._id === data.data?.messageCreated._id
+                //     ? { ...entity, ...data.data.messageCreated }
+                //     : entity;
+
+                const updatedMessages = [
+                  ...(old?.messages || []),
+                  data.data?.messageCreated,
+                ];
+
+                return {
+                  messages: updatedMessages,
+                };
+              },
+            );
+          },
+          error: (err) => console.error(err),
+          complete: () => console.log('complete'),
+        },
+      );
+    }
+
+    return () => {
+      console.log('terminating websocket for chatId:', chatId);
+
+      if (websocketState.current === 'opened') {
+        websocket.current?.dispose();
+        //websocket.current?.terminate();
+      }
+    };
+  }, [chatId]);
+
+  return { websocket };
+};
+
 function Index() {
   const { id: chatId } = Route.useParams();
-
   const { data } = useChat(chatId);
-
   const messageInputRef = useRef<HTMLInputElement>(null);
-
   const chatEndDivRef = useRef<HTMLDivElement>(null);
+
+  useReactQuerySubscribe(chatId);
 
   const { mutate } = useCreateMessage({
     onSuccess: () => {
-      toast({
-        title: 'Message sent',
-        description: 'Your message has been sent',
-      });
-      queryClient.invalidateQueries({
-        queryKey: ['chatMessages', chatId],
-      });
+      // toast({
+      //   title: 'Message sent',
+      //   description: 'Your message has been sent',
+      // });
     },
     onError: (error) => {
       console.log(error);
