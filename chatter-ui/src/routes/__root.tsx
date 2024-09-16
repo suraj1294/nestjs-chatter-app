@@ -1,12 +1,12 @@
-import { Outlet, useLocation, useRouter } from '@tanstack/react-router';
 import { TanStackRouterDevtools } from '@tanstack/router-devtools';
 import { createRootRouteWithContext } from '@tanstack/react-router';
 import { QueryClient } from '@tanstack/react-query';
-import { AuthState, useAuth } from '@/features/auth/auth-context';
+import { AuthState } from '@/features/auth/auth-context';
 import { MessagesSquare } from 'lucide-react';
 import UserMenu from '@/features/auth/user-menu';
 import { ModeToggle } from '@/components/toggle-theme-button';
-import { useEffect } from 'react';
+
+import ProtectedLayout from '@/features/auth/protected-layout';
 
 export interface User {
   id: string;
@@ -24,16 +24,6 @@ export const Route = createRootRouteWithContext<AppRouterContext>()({
 });
 
 function Index() {
-  const router = useRouter();
-  const path = useLocation().pathname;
-  const { auth } = useAuth();
-
-  useEffect(() => {
-    if (!auth?.user?.id && !path.includes('auth')) {
-      router.navigate({ to: '/auth/login' });
-    }
-  }, [auth?.user?.id, path, router]);
-
   return (
     <>
       <main className="flex flex-col h-full  overflow-hidden">
@@ -48,7 +38,7 @@ function Index() {
             <ModeToggle />
           </div>
         </header>
-        <Outlet />
+        <ProtectedLayout />
       </main>
       {process.env.NODE_ENV === 'development' && <TanStackRouterDevtools />}
     </>
