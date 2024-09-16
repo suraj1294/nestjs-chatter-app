@@ -4,7 +4,8 @@ graphql(`
   fragment ChatFragment on Chat {
     _id
     name
-    isPrivate
-    userIds
+    latestMessage {
+      ...MessageFragment
+    }
   }
 `);

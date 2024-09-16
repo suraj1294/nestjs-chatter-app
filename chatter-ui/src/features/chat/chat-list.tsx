@@ -13,17 +13,31 @@ export function ChatList() {
     <div className="space-y-2">
       <ChatListHeader />
       <ul className="space-y-2">
-        {data?.chats
+        {[...(data?.chats || [])]
+          .sort((a, b) => {
+            if (!a.latestMessage || !b.latestMessage) {
+              return -1;
+            }
+            return (
+              new Date(a.latestMessage.createdAt).getTime() -
+              new Date(b.latestMessage.createdAt).getTime()
+            );
+          })
           .map((chat) => (
             <li key={chat._id}>
-              <Button
-                asChild
-                variant={id !== chat._id ? 'outline' : 'default'}
-                size="sm"
-                className="w-full justify-start"
-              >
-                <Link to={`/chat/${chat._id}`}>{chat.name}</Link>
-              </Button>
+              <Link to={`/chat/${chat._id}`}>
+                <Button
+                  variant={id !== chat._id ? 'outline' : 'secondary'}
+                  size="sm"
+                  className="w-full justify-start items-start h-auto py-4 flex flex-col"
+                >
+                  <h1>{chat.name}</h1>
+                  <div className="block">
+                    <span>{chat?.latestMessage?.user.name}</span>
+                    <span>{chat?.latestMessage?.content}</span>
+                  </div>
+                </Button>
+              </Link>
             </li>
           ))
           .reverse()}

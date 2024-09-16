@@ -4,20 +4,23 @@ import { useQuery } from '@tanstack/react-query';
 import request from 'graphql-request';
 
 export const messageCreatedQuery = `
-subscription MessageCreated($chatId: String!) {
-    messageCreated(chatId: $chatId) {
-       _id
-    content
-    createdAt
-    userId
-    chatId
+subscription MessageCreated($chatIds: [String!]!) {
+    messageCreated(chatIds: $chatIds) {
+        _id
+        content
+        createdAt
+        chatId
+        user {
+          _id
+          email
+        }
     }
 }
 `;
 
 export const messageCreatedQueryDocument = graphql(/* GraphQL */ `
-  subscription MessageCreated($chatId: String!) {
-    messageCreated(chatId: $chatId) {
+  subscription MessageCreated($chatIds: [String!]!) {
+    messageCreated(chatIds: $chatIds) {
       ...MessageFragment
     }
   }
@@ -25,11 +28,11 @@ export const messageCreatedQueryDocument = graphql(/* GraphQL */ `
 
 messageCreatedQueryDocument;
 
-export const useMessageCreated = (chatId = '') => {
+export const useMessageCreated = (chatIds = []) => {
   const { data, error, isLoading } = useQuery({
-    queryKey: ['messageCreated', chatId],
+    queryKey: ['messageCreated', chatIds],
     queryFn: () =>
-      request(GRAPHQL_WS_URL, messageCreatedQueryDocument, { chatId }),
+      request(GRAPHQL_WS_URL, messageCreatedQueryDocument, { chatIds }),
   });
   return { data, error, isLoading };
 };

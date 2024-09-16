@@ -39,7 +39,6 @@ import { AuthService } from './auth/auth.service';
                 context.user = user;
               } catch (e) {
                 new Logger().error(e);
-                console.log('here...');
                 throw new UnauthorizedException();
               }
             },

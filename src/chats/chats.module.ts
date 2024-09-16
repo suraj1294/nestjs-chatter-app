@@ -3,9 +3,10 @@ import { ChatsService } from './chats.service';
 import { ChatsResolver } from './chats.resolver';
 import { ChatsRepository } from './chats.repository';
 import { DatabaseModule } from 'src/common/database/database.module';
-import { Chat, ChatSchema } from './entities/chat.entity';
+import { Chat } from './entities/chat.entity';
 import { MessagesModule } from './messages/messages.module';
 import { PubSubModule } from 'src/common/pubsub/pubsub.module';
+import { ChatSchema } from './entities/chat.document';
 
 @Module({
   imports: [
@@ -14,6 +15,6 @@ import { PubSubModule } from 'src/common/pubsub/pubsub.module';
     PubSubModule,
   ],
   providers: [ChatsResolver, ChatsService, ChatsRepository],
-  exports: [ChatsRepository, ChatsService],
+  exports: [ChatsRepository],
 })
 export class ChatsModule {}

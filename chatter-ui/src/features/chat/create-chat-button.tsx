@@ -9,8 +9,6 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Switch } from '@/components/ui/switch';
 import { useState } from 'react';
 import useCreateChat from '@/services/useCreateChat';
 import { toast } from '@/components/ui/use-toast';
@@ -18,7 +16,6 @@ import { queryClient } from '@/app';
 import { useNavigate } from '@tanstack/react-router';
 
 export function CreateChatButton() {
-  const [isPrivate, setIsPrivate] = useState(false);
   const [open, setOpen] = useState(false);
   const [name, setName] = useState('');
   const navigate = useNavigate();
@@ -36,7 +33,7 @@ export function CreateChatButton() {
   });
 
   const handleSubmit = () => {
-    mutate({ isPrivate, name });
+    mutate({ name });
   };
 
   return (
@@ -50,16 +47,7 @@ export function CreateChatButton() {
             <DialogHeader>
               <DialogTitle>Create a New Chat</DialogTitle>
             </DialogHeader>
-            <div className="flex items-center space-x-2">
-              <Switch
-                id="isPrivate"
-                name="isPrivate"
-                checked={isPrivate}
-                onCheckedChange={setIsPrivate}
-                disabled={isPending}
-              />
-              <Label htmlFor="isPrivate">Private</Label>
-            </div>
+
             <Input
               placeholder="Chat Name"
               name="name"

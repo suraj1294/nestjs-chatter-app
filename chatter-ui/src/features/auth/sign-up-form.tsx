@@ -26,6 +26,9 @@ import { Card } from '@/components/ui/card';
 
 const FormSchema = z
   .object({
+    name: z.string().min(2, {
+      message: 'Name must be at least 2 characters.',
+    }),
     email: z.string().min(2, {
       message: 'Username must be at least 2 characters.',
     }),
@@ -75,7 +78,7 @@ export function SignUpForm() {
 
   function onSubmit(data: z.infer<typeof FormSchema>) {
     emailRef.current = data.email;
-    mutate({ email: data.email, password: data.password });
+    mutate({ email: data.email, password: data.password, name: data.name });
   }
 
   const errorMessage = parseGqlError(error);
@@ -88,6 +91,19 @@ export function SignUpForm() {
     <Card className="w-2/3 p-4 max-w-96">
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+          <FormField
+            control={form.control}
+            name="name"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Name</FormLabel>
+                <FormControl>
+                  <Input placeholder="john doe" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
           <FormField
             control={form.control}
             name="email"

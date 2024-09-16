@@ -9,6 +9,7 @@ const usersCreateDocument = graphql(/* GraphQL */ `
     createUser(createUserInput: $createUserInput) {
       _id
       email
+      name
     }
   }
 `);
