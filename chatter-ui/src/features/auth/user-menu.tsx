@@ -1,8 +1,7 @@
 import { CircleUser } from 'lucide-react';
-
 import { useAuth } from './auth-context';
 import useLogoutUser from '@/services/useLogoutUser';
-import { useRouter } from '@tanstack/react-router';
+
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -10,18 +9,17 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Button } from '@/components/ui/button';
+import { queryClient } from '@/app';
 
 export const UserMenu = () => {
-  const { auth, setAuth } = useAuth();
-  const router = useRouter();
+  const { auth } = useAuth();
   const { mutate } = useLogoutUser({
     onSuccess: () => {
-      setAuth({ user: undefined });
-      router.navigate({ to: '/auth/login' });
+      queryClient.invalidateQueries({ queryKey: ['me'] });
     },
     onError: () => {
-      setAuth({ user: undefined });
-      router.navigate({ to: '/auth/login' });
+      // TODO: handle error
+      //queryClient.invalidateQueries({ queryKey: ['me'] });
     },
   });
 
@@ -36,7 +34,7 @@ export const UserMenu = () => {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
-        <DropdownMenuItem>{auth?.user?.email}</DropdownMenuItem>
+        <DropdownMenuItem>{auth?.user?.name}</DropdownMenuItem>
         <DropdownMenuItem onClick={() => mutate()}>log out</DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

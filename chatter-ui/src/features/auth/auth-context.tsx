@@ -1,11 +1,5 @@
 import useGetMe from '@/services/useGetMe';
-import {
-  createContext,
-  useCallback,
-  useContext,
-  useEffect,
-  useState,
-} from 'react';
+import { createContext, useContext } from 'react';
 
 export interface User {
   id: string;
@@ -23,49 +17,25 @@ type AuthProviderProps = {
 
 type AuthContextState = {
   auth?: AuthState | null;
-  setAuth: (authState: Partial<AuthState>) => void;
   isLoading?: boolean;
-  loadUser?: () => void;
 };
 
 const initialState: AuthContextState = {
   auth: undefined,
-  setAuth: () => null,
   isLoading: false,
-  loadUser: () => null,
 };
 
 const AuthProviderContext = createContext<AuthContextState>(initialState);
 
 export function AuthProvider({ children, ...props }: AuthProviderProps) {
-  const [auth, setAuth] = useState<AuthState | null | undefined>();
-
-  const { data, isLoading, loadUser, status } = useGetMe();
-
-  const setAuthState = useCallback((auth: Partial<AuthState>) => {
-    setAuth((prev) => ({ ...prev, ...auth }));
-  }, []);
-
-  useEffect(() => {
-    if (data) {
-      setAuthState({ user: { id: data.me._id, email: data.me.email } });
-    }
-  }, [data, isLoading, setAuthState]);
-
-  useEffect(() => {
-    if (status === 'settled' && !data) {
-      setAuth(null);
-    }
-  }, [data, status]);
+  const { data, isLoading, isFetched } = useGetMe();
 
   return (
     <AuthProviderContext.Provider
       {...props}
       value={{
-        auth,
-        setAuth: setAuthState,
-        isLoading: auth === undefined,
-        loadUser,
+        auth: data?.me ? { user: { id: data.me._id, ...data.me } } : undefined,
+        isLoading: isLoading || !isFetched,
       }}
     >
       {children}

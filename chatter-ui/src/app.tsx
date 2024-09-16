@@ -1,8 +1,4 @@
-import {
-  QueryCache,
-  QueryClient,
-  QueryClientProvider,
-} from '@tanstack/react-query';
+import { QueryCache, QueryClient } from '@tanstack/react-query';
 import { RouterProvider, createRouter } from '@tanstack/react-router';
 import { routeTree } from './routeTree.gen';
 
@@ -20,7 +16,9 @@ export const queryClient = new QueryClient({
     onError(error) {
       console.warn(parseGqlError(error));
       if (parseGqlError(error) === 'Unauthorized') {
-        router.navigate({ to: '/auth/login' });
+        if (window.location.pathname === '/auth/login') return;
+        window.location.href = '/auth/login';
+        //queryClient.invalidateQueries({ queryKey: ['me'] });
       }
     },
   }),
@@ -50,11 +48,7 @@ const App = () => {
       </div>
     );
 
-  return (
-    <QueryClientProvider client={queryClient}>
-      <RouterProvider router={router} context={{ auth, queryClient }} />
-    </QueryClientProvider>
-  );
+  return <RouterProvider router={router} context={{ auth, queryClient }} />;
 };
 
 export default App;

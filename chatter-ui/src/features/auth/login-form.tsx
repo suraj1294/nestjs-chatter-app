@@ -18,6 +18,7 @@ import { Loader } from 'lucide-react';
 import useLoginUser from '@/services/useLoginUser';
 import { AxiosError } from 'axios';
 import { useAuth } from './auth-context';
+import { queryClient } from '@/app';
 
 const FormSchema = z.object({
   email: z.string().min(2, {
@@ -29,7 +30,7 @@ const FormSchema = z.object({
 });
 
 export function LoginForm() {
-  const { auth, loadUser } = useAuth();
+  const { auth } = useAuth();
 
   const { mutate, isPending, error } = useLoginUser({
     onSuccess: () => {
@@ -37,9 +38,8 @@ export function LoginForm() {
         title: 'Login Success.',
         description: 'Logged in Successfully',
       });
-
+      queryClient.invalidateQueries({ queryKey: ['me'] });
       form.reset();
-      loadUser?.();
     },
     onError: () => {
       toast({
@@ -64,9 +64,7 @@ export function LoginForm() {
   const errorMessage = (error as AxiosError<{ message?: string }>)?.response
     ?.data?.message;
 
-  if (auth?.user) {
-    return <Navigate to="/" />;
-  }
+  if (auth?.user?.id) return <Navigate to="/" />;
 
   return (
     <Card className="w-2/3 p-4 max-w-96">
