@@ -15,7 +15,7 @@ const ProtectedLayout = () => {
 
   return (
     <>
-      {auth?.user?.id || path === '/auth/login' ? (
+      {auth?.user?.id || path === '/auth/login' || path === '/auth/sign-up' ? (
         <Outlet />
       ) : (
         <Navigate to="/auth/login" />
